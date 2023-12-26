@@ -10,7 +10,7 @@ namespace ALRedda.Business_Objects
 {
 
 
-    [FormAttribute("392", "Business_Objects/JEPay.b1f")]
+    [FormAttribute("392_NoUse", "Business_Objects/JEPay.b1f")]
     public class JEPay : SystemFormBase
     {
         public SAPbouiCOM.Form oForm;

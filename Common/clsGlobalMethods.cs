@@ -562,6 +562,27 @@ namespace General.Common
             }
         }
 
+        public decimal CtoD(object Pstring)
+        {
+            decimal CtoD = 0;
+            try
+            {
+                decimal LdblResult;
+                if (Information.IsDBNull(Pstring))
+                    return CtoD;
+                string Lstr = System.Convert.ToString(Pstring);
+
+                if (decimal.TryParse(Lstr, out LdblResult))
+                    CtoD = LdblResult;
+                return CtoD;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public int Ctoint(object Pstring)
         {
             int Ctoint = 0;

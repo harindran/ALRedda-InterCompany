@@ -46,6 +46,7 @@ namespace ALRedda.Business_Objects
             this.ComboBox0.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.ComboBox0_ComboSelectAfter);
             this.EditText0.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.EditText0_LostFocusAfter);
             this.Folder0.ClickBefore += new SAPbouiCOM._IFolderEvents_ClickBeforeEventHandler(this.Folder0_ClickBefore);
+            this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_6").Specific));
             this.OnCustomInitialize();
 
         }
@@ -294,5 +295,6 @@ namespace ALRedda.Business_Objects
             }
         }
 
+        private Matrix Matrix0;
     }
 }

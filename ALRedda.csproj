@@ -72,6 +72,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ATPL">
+      <HintPath>..\..\..\..\Project\ATPL\ATPL\bin\Debug\net48\ATPL.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
     </Reference>
@@ -108,6 +111,9 @@
     <Compile Include="Business_Objects\Incpay.b1f.cs">
       <DependentUpon>Incpay.b1f</DependentUpon>
     </Compile>
+    <Compile Include="Business_Objects\InterCompJE.b1f.cs">
+      <DependentUpon>InterCompJE.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Business_Objects\JEPay.b1f.cs">
       <DependentUpon>JEPay.b1f</DependentUpon>
     </Compile>
@@ -122,6 +128,7 @@
     <Compile Include="Common\clsModule.cs" />
     <Compile Include="Common\clsRightClickEvent.cs" />
     <Compile Include="Common\clsTable.cs" />
+    <Compile Include="Common\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +161,9 @@
     </None>
     <None Include="Business_Objects\Incpay.b1f__orig_srf">
       <DependentUpon>Incpay.b1f</DependentUpon>
+    </None>
+    <None Include="Business_Objects\InterCompJE.b1f">
+      <FormCategory>UserForm</FormCategory>
     </None>
     <None Include="Business_Objects\JEPay.b1f">
       <FormCategory>SystemForm</FormCategory>

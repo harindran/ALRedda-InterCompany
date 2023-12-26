@@ -235,6 +235,7 @@ namespace General.Common
                 return;                      
             CreateMenu("", objapplication.Menus.Item("43525").SubMenus.Count+1, "DB Configuration", SAPbouiCOM.BoMenuType.mt_POPUP, "DB Configuration", "43525");            
             CreateMenu("", objapplication.Menus.Item("DB Configuration").SubMenus.Count + 1, "Configuration", SAPbouiCOM.BoMenuType.mt_STRING, "CONFIG", "DB Configuration");
+            CreateMenu("", objapplication.Menus.Item("1536").SubMenus.Count + 1, "Inter Company Transaction", SAPbouiCOM.BoMenuType.mt_STRING, "ICT", "1536");
            
         }
 
@@ -401,7 +402,11 @@ namespace General.Common
                             break;
                         case "1287":
                             SAPbouiCOM.Form activefrmq = clsModule.objaddon.objapplication.Forms.ActiveForm;
-                            break;                     
+                            break;
+                        case "ICT":
+                            InterCompJE InterCompJE = new InterCompJE();
+                            InterCompJE.Show();
+                            break;
                     }
                 }
             else

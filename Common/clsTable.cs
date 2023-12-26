@@ -65,17 +65,48 @@ namespace General.Common
             AddUDO("ATPL_ODBJE", "Other Database Journal Entry", SAPbobsCOM.BoUDOObjType.boud_Document, "ODBJE", new[] { "" }, new[] { "DocEntry", "DocNum" }, true, true);
 
 
+            AddTables("OITC", "Inter Company Table", SAPbobsCOM.BoUTBTableType.bott_Document);
+            AddTables("ITC1", "Inter Company Table Line", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
+
+
+            AddFields("@OITC", "DocNum", "Document Number", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@OITC", "DocDate", "Document Date", SAPbobsCOM.BoFieldTypes.db_Date);            
+            AddFields("@OITC", "Remarks", "Remarks", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
+
+            AddFields("@ITC1", "DBComp", "DB Company", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "GLCode", "GL Code", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "GLName", "GL Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "GLAcc", "GL Account", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "Debit", "Debit", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "Credit", "Credit", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "OffComp", "Offset Company", SAPbobsCOM.BoFieldTypes.db_Alpha,50);
+            AddFields("@ITC1", "OffLed", "Offset Ledger", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);        
+            AddFields("@ITC1", "Dim1", "Dimension 1", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC1", "Dim2", "Dimension 2", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC1", "Dim3", "Dimension 3", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC1", "Dim4", "Dimension 4", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC1", "Dim5", "Dimension 5", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+
+            AddUDO("ATPL_OITC", "Inter Company Table Entry", SAPbobsCOM.BoUDOObjType.boud_Document, "OITC", new[] { "ITC1" }, new[] { "DocEntry", "DocNum" }, true, true);
+
             #region "Setting Table"
             AddTables("CONFIG", "Configuration Header", SAPbobsCOM.BoUTBTableType.bott_MasterData);
             AddTables("CONFIG1", "Configuration Lines", SAPbobsCOM.BoUTBTableType.bott_MasterDataLines);         
+            AddTables("CONFIG2", "Configuration2 Lines", SAPbobsCOM.BoUTBTableType.bott_MasterDataLines);         
             AddFields("@CONFIG1", "DBName", "DB Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
             AddFields("@CONFIG1", "DBUser", "DB User Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
             AddFields("@CONFIG1", "DBPass", "DB Password", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
             AddFields("@CONFIG1", "sysUser", "Sys User Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
             AddFields("@CONFIG1", "sysPass", "Sys Pass", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
             AddFields("@CONFIG1", "BPCode", "BPCode Vendor", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
-            AddFields("@CONFIG1", "BPCode1", "BPCode Customer", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
-            AddUDO("ATPL_CONFIG", "Configuration", SAPbobsCOM.BoUDOObjType.boud_MasterData, "CONFIG", new[] { "CONFIG1" }, new[] { "Code", "Name" }, true, false);
+            AddFields("@CONFIG1", "BPCode1", "BPCode Customer", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+
+            AddFields("@CONFIG2", "DBName1", "DB Name 1", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@CONFIG2", "DBName2", "DB Name 2", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@CONFIG2", "DBOffset", "DBOffset", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            
+
+            AddUDO("ATPL_CONFIG", "Configuration", SAPbobsCOM.BoUDOObjType.boud_MasterData, "CONFIG", new[] { "CONFIG1","CONFIG2" }, new[] { "Code", "Name" }, true, false);
             #endregion "Setting Table"  
 
 
