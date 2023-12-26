@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.1927
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALRedda", "ALRedda.csproj", "{CF2CB200-2DBD-4398-8230-777C83CD055F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FEA2BBF-3EB7-4F5A-A336-1C1CEBF99C68} = {7FEA2BBF-3EB7-4F5A-A336-1C1CEBF99C68}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATPL", "..\ATPL\ATPL\ATPL.csproj", "{7FEA2BBF-3EB7-4F5A-A336-1C1CEBF99C68}"
 EndProject

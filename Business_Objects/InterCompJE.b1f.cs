@@ -34,6 +34,7 @@ namespace ALRedda.Business_Objects
             this.Matrix0.KeyDownBefore += new SAPbouiCOM._IMatrixEvents_KeyDownBeforeEventHandler(this.Matrix0_KeyDownBefore);
             this.Folder0 = ((SAPbouiCOM.Folder)(this.GetItem("Item_2").Specific));
             this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("1").Specific));
+            this.Button0.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button0_ClickBefore);
             this.Button0.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.Button0_ClickAfter);
             this.Button1 = ((SAPbouiCOM.Button)(this.GetItem("2").Specific));
             this.StaticText0 = ((SAPbouiCOM.StaticText)(this.GetItem("LDocNo").Specific));
@@ -502,6 +503,38 @@ namespace ALRedda.Business_Objects
             OnCustomInitialize();
             EditText2.Value = "";
           }
+
+        private void Button0_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            string ErrorMsg="";
+            BubbleEvent = DoValidation(ref ErrorMsg);
+            if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                clsModule.objaddon.objapplication.StatusBar.SetText(ErrorMsg, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+            }
+        }
+
+        private bool DoValidation(ref string ErrorMsg)
+        {
+            bool doValidation = true;
+
+
+            decimal Credit = Enumerable.Range(1, Matrix0.RowCount).Sum(row =>
+                        clsModule.objaddon.objglobalmethods.CtoD(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Debit").Cells.Item(row).Specific).Value));
+
+            decimal debit = Enumerable.Range(1, Matrix0.RowCount).Sum(row =>
+                  clsModule.objaddon.objglobalmethods.CtoD(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Credit").Cells.Item(row).Specific).Value));
+
+            if (Credit-debit!=0)
+            {
+                ErrorMsg = "Kindly Check  Amount Total Must be Zero ";
+                doValidation = false;
+            }
+
+
+
+            return doValidation;
+        }
     }
 
 }
