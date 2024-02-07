@@ -40,10 +40,14 @@ namespace ALRedda.Business_Objects
                 BPCodeVendor = rc.Fields.Item("U_BPCode").Value.ToString();
                 BPCodeCustomer = rc.Fields.Item("U_BPCode1").Value.ToString();
                 int result = objAnothercompany.Connect();
+                clsModule.objaddon.objapplication.StatusBar.SetText(DBName + "processing", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
                 string error;
                 if (result != 0)
                 {
                     objAnothercompany.GetLastError(out result, out error);
+                    clsModule.objaddon.objapplication.StatusBar.SetText(error, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
                     return false;
                 }
 
@@ -237,6 +241,7 @@ namespace ALRedda.Business_Objects
                         {
                             RecAmount = Convert.ToDouble(((SAPbouiCOM.EditText)Matrix1.Columns.Item("TotPay").Cells.Item(i + 1).Specific).Value.ToString());
                             double exchange = Convert.ToDouble(objRs.Fields.Item("DocRate").Value.ToString());
+                            exchange = 1;
                             openTrans.InternalReconciliationOpenTransRows.Add();
                             openTrans.InternalReconciliationOpenTransRows.Item(Row).Selected = BoYesNoEnum.tYES;
                             openTrans.InternalReconciliationOpenTransRows.Item(Row).TransId = Convert.ToInt32(objRs.Fields.Item("TransId").Value.ToString());

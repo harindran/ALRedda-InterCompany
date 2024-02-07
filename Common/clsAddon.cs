@@ -230,13 +230,14 @@ namespace General.Common
 
         private void Menu()
         {
+      
+            if (objapplication.Menus.Item("43520").SubMenus.Exists("Inter Company"))
+                return;
+            CreateMenu("", objapplication.Menus.Item("43520").SubMenus.Count + 1, "Inter Company", SAPbouiCOM.BoMenuType.mt_POPUP, "Inter Company", "43520");
+            CreateMenu("", objapplication.Menus.Item("Inter Company").SubMenus.Count + 1, "Inter Company Transaction", SAPbouiCOM.BoMenuType.mt_STRING, "ICT", "Inter Company");
+            CreateMenu("", objapplication.Menus.Item("Inter Company").SubMenus.Count + 1, "DB Configuration", SAPbouiCOM.BoMenuType.mt_STRING, "CONFIG", "Inter Company");
             
-            if (objapplication.Menus.Item("43525").SubMenus.Exists("DB Configuration"))
-                return;                      
-            CreateMenu("", objapplication.Menus.Item("43525").SubMenus.Count+1, "DB Configuration", SAPbouiCOM.BoMenuType.mt_POPUP, "DB Configuration", "43525");            
-            CreateMenu("", objapplication.Menus.Item("DB Configuration").SubMenus.Count + 1, "Configuration", SAPbouiCOM.BoMenuType.mt_STRING, "CONFIG", "DB Configuration");
-            CreateMenu("", objapplication.Menus.Item("1536").SubMenus.Count + 1, "Inter Company Transaction", SAPbouiCOM.BoMenuType.mt_STRING, "ICT", "1536");
-           
+
         }
 
         public void Add_Authorizations()

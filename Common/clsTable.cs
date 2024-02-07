@@ -77,8 +77,8 @@ namespace General.Common
             AddFields("@ITC1", "GLCode", "GL Code", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
             AddFields("@ITC1", "GLName", "GL Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
             AddFields("@ITC1", "GLAcc", "GL Account", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
-            AddFields("@ITC1", "Debit", "Debit", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
-            AddFields("@ITC1", "Credit", "Credit", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "Debit", "Debit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC1", "Credit", "Credit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
             AddFields("@ITC1", "OffComp", "Offset Company", SAPbobsCOM.BoFieldTypes.db_Alpha,50);
             AddFields("@ITC1", "OffLed", "Offset Ledger", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);        
             AddFields("@ITC1", "Dim1", "Dimension 1", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);

@@ -43,6 +43,7 @@ namespace ALRedda.Business_Objects
             this.EditText1 = ((SAPbouiCOM.EditText)(this.GetItem("DocDt").Specific));
             this.StaticText2 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_7").Specific));
             this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Remark").Specific));
+            this.EditText3 = ((SAPbouiCOM.EditText)(this.GetItem("DocEntry").Specific));
             this.OnCustomInitialize();
 
         }
@@ -52,15 +53,22 @@ namespace ALRedda.Business_Objects
         /// </summary>
         public override void OnInitializeFormEvents()
         {
-            this.LoadAfter += new LoadAfterHandler(this.Form_LoadAfter);
+            this.LoadAfter += new SAPbouiCOM.Framework.FormBase.LoadAfterHandler(this.Form_LoadAfter);
+            this.DataAddAfter += new DataAddAfterHandler(this.Form_DataAddAfter);
 
         }
 
         private SAPbouiCOM.Matrix Matrix0;
 
-        
+
 
         private void OnCustomInitialize()
+        {
+            startInit();
+
+        }
+
+        private void startInit()
         {
             Matrix0.AddRow();
 
@@ -82,7 +90,6 @@ namespace ALRedda.Business_Objects
 
             EditText0.Item.Enabled = false;
             Matrix0.Columns.Item("#").Editable = false;
-
         }
 
         private SAPbouiCOM.Folder Folder0;
@@ -360,7 +367,15 @@ namespace ALRedda.Business_Objects
 
                     for (int j = 0; j < 2; j++)
                     {
-                        Code = j == 0 ? rc.Fields.Item("U_GLCode").Value.ToString() : rc.Fields.Item("U_OffLed").Value.ToString();
+                        string OffsetLed = rc.Fields.Item("U_OffLed").Value.ToString();
+
+                        if (string.IsNullOrEmpty( rc.Fields.Item("U_OffLed").Value.ToString()) && j!=0)
+                       {
+                            string lstquery = "SELECT \"U_DBOffset\"  FROM \"@CONFIG2\" c WHERE \"U_DBName1\" ='" + rc.Fields.Item("U_DBComp").Value.ToString() + "';";
+                            OffsetLed = clsModule.objaddon.objglobalmethods.getSingleValue(lstquery);
+                        }
+
+                        Code = j == 0 ? rc.Fields.Item("U_GLCode").Value.ToString() : OffsetLed;
                         Credit = j == 0 ? currcredit : currdebit;
                         Debit = j == 0 ? currdebit : currcredit;
                         Dim1 = rc.Fields.Item("U_Dim1").Value.ToString();
@@ -391,6 +406,8 @@ namespace ALRedda.Business_Objects
                         if (position == -1)
                         {
                             companies.Add(companyName, new List<Dictionary<string, object>> { companyData });
+                            clsModule.objaddon.objapplication.StatusBar.SetText(companyName + "processing", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
                         }
                         else
                         {
@@ -410,6 +427,7 @@ namespace ALRedda.Business_Objects
                     if (!string.IsNullOrEmpty(companyName))
                     {
 
+                        clsModule.objaddon.objapplication.StatusBar.SetText("Starting Connection", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
 
                         Transaction.anotherCompany(companyName, out objAnothercompany, out BPCodeCustomer, out BPCodeVendor);
                         PostVoucher(companies[companyName]);
@@ -429,72 +447,85 @@ namespace ALRedda.Business_Objects
 
         private void Button0_ClickAfter(object sboObject, SBOItemEventArg pVal)
         {
-            if (pVal.ActionSuccess)
+            try
             {
-                GeneralService oGeneralService;
-                GeneralData oGeneralData;
-                GeneralDataParams oGeneralParams;
 
-                oGeneralService = clsModule.objaddon.objcompany.GetCompanyService().GetGeneralService("ATPL_OITC");
-                oGeneralData = (GeneralData)oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralData);
-                oGeneralParams = (GeneralDataParams)oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralDataParams);
-
-                if (!string.IsNullOrEmpty(DocEntry))
+                if (pVal.ActionSuccess)
                 {
-                    oGeneralParams.SetProperty("DocEntry", DocEntry);
-                    oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+                    //GeneralService oGeneralService;
+                    //GeneralData oGeneralData;
+                    //GeneralDataParams oGeneralParams;
+
+                    //oGeneralService = clsModule.objaddon.objcompany.GetCompanyService().GetGeneralService("ATPL_OITC");
+                    //oGeneralData = (GeneralData)oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralData);
+                    //oGeneralParams = (GeneralDataParams)oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralDataParams);
+
+                    //if (!string.IsNullOrEmpty(DocEntry))
+                    //{
+                    //    oGeneralParams.SetProperty("DocEntry", DocEntry);
+                    //    oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+                    //}
+
+                    //oGeneralData.SetProperty("U_DocNum", EditText0.Value);
+                    //oGeneralData.SetProperty("U_DocDate", stf.GetDate(EditText1.Value));
+                    //oGeneralData.SetProperty("U_Remarks", EditText2.Value);
+
+                    //oGeneralData.Child("ITC1").Add();
+                    //int rowcount = 0;
+                    //for (int i = 1; i <= Matrix0.VisualRowCount; i++)
+                    //{
+                    //    clsModule.objaddon.objapplication.StatusBar.SetText("Row Count" + i, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+                    //    if (((SAPbouiCOM.EditText)Matrix0.Columns.Item("DBComp").Cells.Item(i).Specific).String != "")
+                    //    {
+                    //        if (i > oGeneralData.Child("ITC1").Count)
+                    //        {
+                    //            oGeneralData.Child("ITC1").Add();
+                    //        }
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_DBComp", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("DBComp").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLCode", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLCode").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLName", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLName").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLAcc", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLAcc").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Debit", stf.ObjtoStr(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Debit").Cells.Item(i).Specific).String));
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Credit", stf.ObjtoStr(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Credit").Cells.Item(i).Specific).String));
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_OffComp", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("OffComp").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_OffLed", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("OffLed").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim1", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim1").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim2", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim2").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim3", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim3").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim4", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim4").Cells.Item(i).Specific).String);
+                    //        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim5", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim5").Cells.Item(i).Specific).String);
+                    //        rowcount++;
+                    //    }
+                    //}
+                    //if (!string.IsNullOrEmpty(DocEntry))
+                    //{
+                    //    oGeneralService.Update(oGeneralData);
+                    //}
+                    //else
+                    //{
+                    //    oGeneralParams = oGeneralService.Add(oGeneralData);
+                    //    DocEntry = oGeneralParams.GetProperty("DocEntry").ToString();
+                    //}
+
+
+                    //clsModule.objaddon.objapplication.StatusBar.SetText("Processing...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+                    //if (PostotherDB())
+                    //{
+                    //    clsModule.objaddon.objapplication.StatusBar.SetText("Data Saved Successfully...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                    //    Cleartext();
+                    //}
                 }
 
-                oGeneralData.SetProperty("U_DocNum", EditText0.Value);
-                oGeneralData.SetProperty("U_DocDate", stf.GetDate(EditText1.Value));
-                oGeneralData.SetProperty("U_Remarks", EditText2.Value);
-
-                oGeneralData.Child("ITC1").Add();
-                int rowcount = 0;
-                for (int i = 1; i <= Matrix0.VisualRowCount; i++)
-                {
-                    if (((SAPbouiCOM.EditText)Matrix0.Columns.Item("DBComp").Cells.Item(i).Specific).String != "")
-                    {
-                        if (i > oGeneralData.Child("ITC1").Count)
-                        {
-                            oGeneralData.Child("ITC1").Add();
-                        }
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_DBComp", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("DBComp").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLCode", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLCode").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLName", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLName").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_GLAcc", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("GLAcc").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Debit", stf.ObjtoStr(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Debit").Cells.Item(i).Specific).String));
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Credit", stf.ObjtoStr(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Credit").Cells.Item(i).Specific).String));
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_OffComp", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("OffComp").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_OffLed", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("OffLed").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim1", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim1").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim2", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim2").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim3", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim3").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim4", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim4").Cells.Item(i).Specific).String);
-                        oGeneralData.Child("ITC1").Item(rowcount).SetProperty("U_Dim5", ((SAPbouiCOM.EditText)Matrix0.Columns.Item("Dim5").Cells.Item(i).Specific).String);
-                        rowcount++;
-                    }
-                }
-                if (!string.IsNullOrEmpty(DocEntry))
-                {
-                    oGeneralService.Update(oGeneralData);
-                }
-                else
-                {
-                    oGeneralParams = oGeneralService.Add(oGeneralData);
-                    DocEntry = oGeneralParams.GetProperty("DocEntry").ToString();
-                }
-
-
-                clsModule.objaddon.objapplication.StatusBar.SetText("Processing...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
-
-                if (PostotherDB())
-                {
-                    clsModule.objaddon.objapplication.StatusBar.SetText("Data Saved Successfully...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-                    Cleartext();
-                }
             }
-            
+            catch (Exception ex)
+            {
+                clsModule.objaddon.objapplication.StatusBar.SetText(ex.Message.ToString(), SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+                clsModule.objaddon.objapplication.StatusBar.SetText(ex.InnerException.ToString(), SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+            }
+
         }
 
         private void Cleartext()
@@ -502,16 +533,18 @@ namespace ALRedda.Business_Objects
             Matrix0.Clear();
             OnCustomInitialize();
             EditText2.Value = "";
-          }
+        }
 
         private void Button0_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
-            string ErrorMsg="";
+            string ErrorMsg = "";
             BubbleEvent = DoValidation(ref ErrorMsg);
             if (!string.IsNullOrEmpty(ErrorMsg))
             {
-                clsModule.objaddon.objapplication.StatusBar.SetText(ErrorMsg, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+                clsModule.objaddon.objapplication.StatusBar.SetText(ErrorMsg, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
             }
+            clsModule.objaddon.objglobalmethods.RemoveLastrow(Matrix0, "DBComp");
+           
         }
 
         private bool DoValidation(ref string ErrorMsg)
@@ -525,7 +558,7 @@ namespace ALRedda.Business_Objects
             decimal debit = Enumerable.Range(1, Matrix0.RowCount).Sum(row =>
                   clsModule.objaddon.objglobalmethods.CtoD(((SAPbouiCOM.EditText)Matrix0.Columns.Item("Credit").Cells.Item(row).Specific).Value));
 
-            if (Credit-debit!=0)
+            if (Credit - debit != 0)
             {
                 ErrorMsg = "Kindly Check  Amount Total Must be Zero ";
                 doValidation = false;
@@ -533,10 +566,31 @@ namespace ALRedda.Business_Objects
 
 
 
+
+
+
             return doValidation;
         }
+
+        private void Form_DataAddAfter(ref BusinessObjectInfo pVal)
+        {
+            if (pVal.ActionSuccess)
+            {
+                DocEntry = oForm.DataSources.DBDataSources.Item("@OITC").GetValue("DocEntry", 0);
+                clsModule.objaddon.objapplication.StatusBar.SetText("Processing...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+                if (PostotherDB())
+                {
+                    clsModule.objaddon.objapplication.StatusBar.SetText("Data Saved Successfully...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                    Cleartext();
+                }
+            }
+
+        }
+
+        private EditText EditText3;
     }
 
 }
-    
+
 
