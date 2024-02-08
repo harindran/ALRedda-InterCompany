@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ALRedda.Business_Objects.SupportFiles;
 namespace General.Common
 {
     class clsMenuEvent
@@ -20,9 +20,10 @@ namespace General.Common
 
                     switch (clsModule.objaddon.objapplication.Forms.ActiveForm.TypeEx)
                     {
-                        case "179"://AR Credit Memo    
-                            //Default_Sample_MenuEvent(pVal, BubbleEvent)
+                        case "ICT":
+                            ICT_MenuEvent(ref pVal, ref BubbleEvent);
                             break;
+
                     }
                 }
                 else
@@ -30,10 +31,35 @@ namespace General.Common
                     switch (clsModule.objaddon.objapplication.Forms.ActiveForm.TypeEx)
                     {
 
-                        case "179"://AR Credit Memo                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ICT_MenuEvent(ref SAPbouiCOM.MenuEvent pval, ref bool BubbleEvent)
+        {
+            try
+            {
+
+                objform = clsModule.objaddon.objapplication.Forms.ActiveForm;
+                if (!pval.BeforeAction)
+                {
+                    switch (pval.MenuUID)
+                    {
+                        case "1288":
+                        case "1289":
+                        case "1290":
+                        case "1291":
+                        case "1304":
+                        case "1282":
+                            ITCclscs cNCReq = new ITCclscs(objform);
+                            cNCReq.ITCStart();
                             break;
-                    }                  
-                }        
+                    }
+                }
             }
             catch (Exception ex)
             {

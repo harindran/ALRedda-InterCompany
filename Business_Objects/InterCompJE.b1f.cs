@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ALRedda.Business_Objects.SupportFiles;
 using General.Common;
 using SAPbobsCOM;
 using SAPbouiCOM;
@@ -64,8 +65,9 @@ namespace ALRedda.Business_Objects
 
         private void OnCustomInitialize()
         {
-            startInit();
-
+            // startInit();
+            ITCclscs cNCReq = new ITCclscs(oForm);
+            cNCReq.ITCStart();
         }
 
         private void startInit()

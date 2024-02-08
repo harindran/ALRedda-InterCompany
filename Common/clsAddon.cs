@@ -394,16 +394,28 @@ namespace General.Common
                 {
                     switch (pVal.MenuUID)
                     {
+                        case "1281":
+                        case "1282":
+                        case "1283":
+                        case "1284":
+                        case "1285":
+                        case "1286":
+                        case "1287":
+                        case "1300":
+                        case "1288":
+                        case "1289":
+                        case "1290":
+                        case "1291":
+                        case "1304":
+                        case "1292":
+                        case "1293":
+                            objmenuevent.MenuEvent_For_StandardMenu(ref pVal, ref BubbleEvent);
+                            break;
+
                         case "CONFIG":
                             CONFIG Configuration = new CONFIG();
                             Configuration.Show();
-                            break;
-                        case "1304":
-                            SAPbouiCOM.Form activefrm = clsModule.objaddon.objapplication.Forms.ActiveForm;
-                            break;
-                        case "1287":
-                            SAPbouiCOM.Form activefrmq = clsModule.objaddon.objapplication.Forms.ActiveForm;
-                            break;
+                            break;                        
                         case "ICT":
                             InterCompJE InterCompJE = new InterCompJE();
                             InterCompJE.Show();

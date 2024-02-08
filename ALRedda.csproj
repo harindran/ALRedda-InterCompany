@@ -129,6 +129,7 @@
     <Compile Include="Common\clsRightClickEvent.cs" />
     <Compile Include="Common\clsTable.cs" />
     <Compile Include="Common\Module.cs" />
+    <Compile Include="SupportFiles\ITCclscs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
