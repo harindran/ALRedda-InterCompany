@@ -35,6 +35,7 @@ namespace ALRedda.Business_Objects
             this.Matrix0.KeyDownBefore += new SAPbouiCOM._IMatrixEvents_KeyDownBeforeEventHandler(this.Matrix0_KeyDownBefore);
             this.Folder0 = ((SAPbouiCOM.Folder)(this.GetItem("Item_2").Specific));
             this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("1").Specific));
+            this.Button0.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button0_PressedAfter);
             this.Button0.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button0_ClickBefore);
             this.Button0.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.Button0_ClickAfter);
             this.Button1 = ((SAPbouiCOM.Button)(this.GetItem("2").Specific));
@@ -73,8 +74,7 @@ namespace ALRedda.Business_Objects
         private void startInit()
         {
             Matrix0.AddRow();
-
-
+            
 
             EditText1.String = DateTime.Today.ToString("yyyyMMdd");
 
@@ -294,13 +294,23 @@ namespace ALRedda.Business_Objects
 
             for (int i = 0; i < companies.Count; i++)
             {
+                decimal credit = 0;
+                decimal Debit = 0;
+
+                decimal totval = clsModule.objaddon.objglobalmethods.CtoD(companies[i].CreditSum) - clsModule.objaddon.objglobalmethods.CtoD(companies[i].DebitSum);
+
+                if (totval > 0)
+                    credit = totval;
+                else
+                    Debit = Math.Abs(totval);
+
 
                 oJV.ReferenceDate = stf.GetDate(companies[i].ReferenceDate.ToString());
                 oJV.Memo = companies[i].Remark.ToString();
 
                 oJV.Lines.ShortName = companies[i].GroupKey.ToString();
-                oJV.Lines.Credit = clsModule.objaddon.objglobalmethods.Cton(companies[i].CreditSum);
-                oJV.Lines.Debit = clsModule.objaddon.objglobalmethods.Cton(companies[i].DebitSum);
+                oJV.Lines.Credit = clsModule.objaddon.objglobalmethods.Cton(credit);
+                oJV.Lines.Debit = clsModule.objaddon.objglobalmethods.Cton(Debit); 
                 oJV.Lines.BPLID = 1;
                 oJV.Lines.CostingCode = companies[i].cost1.ToString();
                 oJV.Lines.CostingCode2 = companies[i].cost2.ToString();
@@ -533,8 +543,8 @@ namespace ALRedda.Business_Objects
         private void Cleartext()
         {
             Matrix0.Clear();
-            OnCustomInitialize();
-            EditText2.Value = "";
+            startInit();
+            
         }
 
         private void Button0_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
@@ -567,8 +577,12 @@ namespace ALRedda.Business_Objects
             }
 
 
+           if (Credit==0 || debit==0)
+            {
+                ErrorMsg = "Check Credit and Debit Amount ";
+                doValidation = false;
 
-
+            }
 
 
             return doValidation;
@@ -584,13 +598,19 @@ namespace ALRedda.Business_Objects
                 if (PostotherDB())
                 {
                     clsModule.objaddon.objapplication.StatusBar.SetText("Data Saved Successfully...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-                    Cleartext();
+                 
                 }
             }
 
         }
 
         private EditText EditText3;
+
+        private void Button0_PressedAfter(object sboObject, SBOItemEventArg pVal)
+        {
+            Cleartext();
+
+        }
     }
 
 }

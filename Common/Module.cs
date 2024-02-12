@@ -9,5 +9,6 @@ namespace General.Common
    public static class Module
     {
         public static ATPL.STDFunc stf = new ATPL.STDFunc();
+        public static ATPL.SapFunc Sapf = new ATPL.SapFunc();
     }
 }
