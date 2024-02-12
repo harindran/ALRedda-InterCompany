@@ -43,9 +43,11 @@ namespace ALRedda.Business_Objects
             this.ComboBox0.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.ComboBox0_ComboSelectAfter);
             this.StaticText2 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_0").Specific));
             this.ComboBox1 = ((SAPbouiCOM.ComboBox)(this.GetItem("Item_3").Specific));
-            this.ComboBox1.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.ComboBox1_ComboSelectAfter);            
+            this.ComboBox1.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.ComboBox1_ComboSelectAfter);
             this.Matrix1 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_8").Specific));
             this.Matrix1.ClickAfter += new SAPbouiCOM._IMatrixEvents_ClickAfterEventHandler(this.Matrix1_ClickAfter);
+            this.OptionBtn0 = ((SAPbouiCOM.OptionBtn)(this.GetItem("57").Specific));
+            this.OptionBtn0.ClickBefore += new SAPbouiCOM._IOptionBtnEvents_ClickBeforeEventHandler(this.OptionBtn0_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -71,7 +73,29 @@ namespace ALRedda.Business_Objects
             oForm.Items.Item("13").ToPane = 21;
             clsModule.objaddon.objglobalmethods.Load_Combo(oForm.UniqueID, this.ComboBox0, strSQL);
             oForm.Items.Item("Item_3").Visible = oForm.Items.Item("1320002037").Visible;
-            oForm.Items.Item("Item_0").Visible = oForm.Items.Item("1320002037").Visible;            
+            oForm.Items.Item("Item_0").Visible = oForm.Items.Item("1320002037").Visible;
+            int alignradio = ((SAPbouiCOM.EditText)oForm.Items.Item("5").Specific).Item.Left+ ((SAPbouiCOM.EditText)oForm.Items.Item("5").Specific).Item.Width+10 ;
+            int space = 0;
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("57").Specific).Item.Left = alignradio;
+            space = ((SAPbouiCOM.OptionBtn)oForm.Items.Item("57").Specific).Item.Top + ((SAPbouiCOM.OptionBtn)oForm.Items.Item("57").Specific).Item.Height +5;
+
+
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("56").Specific).Item.Left = alignradio;
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("56").Specific).Item.Top = space;
+            space = ((SAPbouiCOM.OptionBtn)oForm.Items.Item("56").Specific).Item.Top + ((SAPbouiCOM.OptionBtn)oForm.Items.Item("56").Specific).Item.Height + 5;
+
+
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("58").Specific).Item.Left = alignradio;
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("58").Specific).Item.Top = space;
+
+            space = ((SAPbouiCOM.OptionBtn)oForm.Items.Item("58").Specific).Item.Top + ((SAPbouiCOM.OptionBtn)oForm.Items.Item("58").Specific).Item.Height + 5;
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("10002011").Specific).Item.Left = alignradio;
+            ((SAPbouiCOM.OptionBtn)oForm.Items.Item("10002011").Specific).Item.Top = space;
+          
+
+
+
+
         }
 
         private void Folder0_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
@@ -286,6 +310,15 @@ namespace ALRedda.Business_Objects
             {
                 oForm.Freeze(false);
             }
+        }
+
+        private OptionBtn OptionBtn0;
+
+        private void OptionBtn0_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            throw new System.NotImplementedException();
+
         }
     }
 }
