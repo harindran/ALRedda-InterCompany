@@ -46,6 +46,9 @@ namespace ALRedda.Business_Objects
             this.StaticText2 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_7").Specific));
             this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Remark").Specific));
             this.EditText3 = ((SAPbouiCOM.EditText)(this.GetItem("DocEntry").Specific));
+            this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_3").Specific));
+            this.Button2.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.Button2_ClickAfter);
+            this.Button2.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button2_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -252,8 +255,7 @@ namespace ALRedda.Business_Objects
 
 
             }
-
-
+       
         }
 
         private bool PostVoucher(List<Dictionary<string, object>> company)
@@ -320,7 +322,8 @@ namespace ALRedda.Business_Objects
 
                 oJV.Lines.Add();
             }
-            int iErrCode = oJV.Add();
+            int iErrCode=0;
+           iErrCode = oJV.Add();
             string strerr = "";
             if (iErrCode != 0)
             {
@@ -348,10 +351,11 @@ namespace ALRedda.Business_Objects
             lstrquery += "  \"U_Dim1\" ,\"U_Dim2\" ,\"U_Dim3\" ,\"U_Dim4\" ,\"U_Dim5\",\"U_DocDate\",\"U_Remarks\"  FROM \"@OITC\" t1 ";
             lstrquery += "  LEFT JOIN \"@ITC1\" t2  ON t1.\"DocEntry\" =t2.\"DocEntry\" where t1.\"DocEntry\"='" + DocEntry + "' ; ";
             SAPbobsCOM.Recordset rc = clsModule.objaddon.objglobalmethods.GetmultipleRS(lstrquery);
+            Dictionary<string, List<Dictionary<string, object>>> companies = new Dictionary<string, List<Dictionary<string, object>>>();
+
             if (rc.RecordCount > 0)
             {
-                Dictionary<string, List<Dictionary<string, object>>> companies = new Dictionary<string, List<Dictionary<string, object>>>();
-
+              
                 for (int i = 0; i < rc.RecordCount; i++)
                 {
                     string companyName = rc.Fields.Item("U_DBComp").Value.ToString();
@@ -430,22 +434,117 @@ namespace ALRedda.Business_Objects
                     rc.MoveNext();
                 }
 
+                
+
+            }
+
+
+            companies.Remove(clsModule.objaddon.objcompany.CompanyDB);
+
+            //Current Company
+
+            lstrquery = "";
+
+            lstrquery += "  SELECT '" + clsModule.objaddon.objcompany.CompanyDB + "' \"U_DBComp\",\"U_DBComp\" as \"MainDB\", ";
+            lstrquery += " CASE WHEN \"U_DBComp\" <>  '" + clsModule.objaddon.objcompany.CompanyDB + "'THEN '' ELSE \"U_GLCode\" END AS \"U_GLCode\" ";
+            lstrquery += ",\"U_GLName\" ,\"U_GLAcc\" ,\"U_Debit\" ,\"U_Credit\" ,\"U_OffComp\" ,\"U_OffLed\", ";
+            lstrquery += "  \"U_Dim1\" ,\"U_Dim2\" ,\"U_Dim3\" ,\"U_Dim4\" ,\"U_Dim5\",\"U_DocDate\",\"U_Remarks\"  FROM \"@OITC\" t1 ";
+            lstrquery += "  LEFT JOIN \"@ITC1\" t2  ON t1.\"DocEntry\" =t2.\"DocEntry\" where t1.\"DocEntry\"='" + DocEntry + "' ; ";
+             rc = clsModule.objaddon.objglobalmethods.GetmultipleRS(lstrquery);
+            if (rc.RecordCount > 0)
+            {
+          
+                for (int i = 0; i < rc.RecordCount; i++)
+                {
+                    string companyName = rc.Fields.Item("U_DBComp").Value.ToString();
+                    string Code;
+                    string Credit;
+                    string Debit;
+                    string Dim1;
+                    string Dim2;
+                    string Dim3;
+                    string Dim4;
+                    string Dim5;
+                    string refdate;
+                    string Remark;
+
+                    string currcredit = "";
+                    string currdebit = "";
+                    if (stf.CtoD(rc.Fields.Item("U_Credit").Value.ToString()) != 0)
+                    {
+                        currcredit = rc.Fields.Item("U_Credit").Value.ToString();
+                    }
+                    else
+                    {
+                        currdebit = rc.Fields.Item("U_Debit").Value.ToString();
+                    }
+
+                  
+                        string OffsetLed = rc.Fields.Item("U_GLCode").Value.ToString();
+                
+                        if (string.IsNullOrEmpty(rc.Fields.Item("U_GLCode").Value.ToString()) )
+                        {
+                            string lstquery = "SELECT \"U_DBOffset\"  FROM \"@CONFIG2\" c WHERE \"U_DBName1\" ='" + rc.Fields.Item("MainDB").Value.ToString() + "';";
+                            OffsetLed = clsModule.objaddon.objglobalmethods.getSingleValue(lstquery);
+                        }
+
+                        Code = OffsetLed;
+                        Credit = currcredit; 
+                        Debit = currdebit;
+                        Dim1 = rc.Fields.Item("U_Dim1").Value.ToString();
+                        Dim2 = rc.Fields.Item("U_Dim2").Value.ToString();
+                        Dim3 = rc.Fields.Item("U_Dim3").Value.ToString();
+                        Dim4 = rc.Fields.Item("U_Dim4").Value.ToString();
+                        Dim5 = rc.Fields.Item("U_Dim5").Value.ToString();
+                        refdate = rc.Fields.Item("U_DocDate").Value.ToString();
+                        Remark = rc.Fields.Item("U_Remarks").Value.ToString();
+
+
+                        Dictionary<string, object> companyData = new Dictionary<string, object>
+                    {
+                        {"shortname",Code },
+                        {"credit", Credit},
+                        {"debit", Debit},
+                        {"cost1", Dim1},
+                        {"cost2", Dim2},
+                        {"cost3", Dim3},
+                        {"cost4", Dim4},
+                        {"cost5", Dim5},
+                        { "refDate",refdate},
+                        { "Remark",Remark }
+
+                    };
+
+                        int position = new List<string>(companies.Keys).IndexOf(companyName);
+                        if (position == -1)
+                        {
+                            companies.Add(companyName, new List<Dictionary<string, object>> { companyData });
+                            clsModule.objaddon.objapplication.StatusBar.SetText(companyName + "processing", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+                        }
+                        else
+                        {
+                            companies[companyName].Add(companyData);
+                        }
+                    
+
+                    rc.MoveNext();
+                }
+            }
 
 
 
 
                 foreach (var companyName in companies.Keys)
+            {
+                if (!string.IsNullOrEmpty(companyName))
                 {
-                    if (!string.IsNullOrEmpty(companyName))
-                    {
 
-                        clsModule.objaddon.objapplication.StatusBar.SetText("Starting Connection", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+                    clsModule.objaddon.objapplication.StatusBar.SetText("Starting Connection "+ companyName, SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
 
-                        Transaction.anotherCompany(companyName, out objAnothercompany, out BPCodeCustomer, out BPCodeVendor);
-                        PostVoucher(companies[companyName]);
-                    }
+                    Transaction.anotherCompany(companyName, out objAnothercompany, out BPCodeCustomer, out BPCodeVendor);
+                    PostVoucher(companies[companyName]);
                 }
-
             }
             return true;
         }
@@ -610,6 +709,28 @@ namespace ALRedda.Business_Objects
         {
             Cleartext();
 
+        }
+
+        private Button Button2;
+
+        private void Button2_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+           
+
+        }
+
+        private void Button2_ClickAfter(object sboObject, SBOItemEventArg pVal)
+        {
+
+            DocEntry = oForm.DataSources.DBDataSources.Item("@OITC").GetValue("DocEntry", 0);
+            clsModule.objaddon.objapplication.StatusBar.SetText("Processing...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Warning);
+
+            if (PostotherDB())
+            {
+                clsModule.objaddon.objapplication.StatusBar.SetText("Data Saved Successfully...", SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+            }
         }
     }
 
