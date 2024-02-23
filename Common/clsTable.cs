@@ -67,15 +67,18 @@ namespace General.Common
 
             AddTables("OITC", "Inter Company Table", SAPbobsCOM.BoUTBTableType.bott_Document);
             AddTables("ITC1", "Inter Company Table Line", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
+            AddTables("ITC2", "Suplier Invoice", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
 
 
             AddFields("@OITC", "DocNum", "Document Number", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
             AddFields("@OITC", "DocDate", "Document Date", SAPbobsCOM.BoFieldTypes.db_Date);            
             AddFields("@OITC", "Remarks", "Remarks", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
+            AddFields("@OITC", "CardCode", "CardCode", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
+            AddFields("@OITC", "CardName", "CardName", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);            
 
             AddFields("@ITC1", "DBComp", "DB Company", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
             AddFields("@ITC1", "GLCode", "GL Code", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
-            AddFields("@ITC1", "GLName", "GL Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC1", "GLName", "GL Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
             AddFields("@ITC1", "GLAcc", "GL Account", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
             AddFields("@ITC1", "Debit", "Debit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
             AddFields("@ITC1", "Credit", "Credit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
@@ -87,7 +90,36 @@ namespace General.Common
             AddFields("@ITC1", "Dim4", "Dimension 4", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
             AddFields("@ITC1", "Dim5", "Dimension 5", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
 
-            AddUDO("ATPL_OITC", "Inter Company Table Entry", SAPbobsCOM.BoUDOObjType.boud_Document, "OITC", new[] { "ITC1" }, new[] { "DocEntry", "DocNum" }, true, true);
+
+
+            AddFields("@ITC2", "Comp", "Company", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC2", "GLCode", "GL Code", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC2", "GLName", "GL Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "GLAcc", "GL Account", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC2", "Debit", "Debit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "Credit", "Credit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "TaxCode", "Tax Code", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "TaxName", "Tax Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "TaxAmt", "Tax Amt", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "TaxRate", "Tax Rate", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "Cost1", "Dimension 1", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "Cost2", "Dimension 2", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "Cost3", "Dimension 3", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "Cost4", "Dimension 4", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "Cost5", "Dimension 5", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffComp", "Offset Company", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC2", "OffLed", "Offset Ledger", SAPbobsCOM.BoFieldTypes.db_Alpha, 50);
+            AddFields("@ITC2", "OffLedName", "Offset Ledger Name", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffDebit", "Offset Debit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "OffCredit", "Offset Credit", SAPbobsCOM.BoFieldTypes.db_Float, nSubType: SAPbobsCOM.BoFldSubTypes.st_Price);
+            AddFields("@ITC2", "OffCost1", "Offset Dimension 1", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffCost2", "Offset Dimension 2", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffCost3", "Offset Dimension 3", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffCost4", "Offset Dimension 4", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+            AddFields("@ITC2", "OffCost5", "Offset Dimension 5", SAPbobsCOM.BoFieldTypes.db_Alpha, 100);
+
+
+            AddUDO("ATPL_OITC", "Inter Company Table Entry", SAPbobsCOM.BoUDOObjType.boud_Document, "OITC", new[] { "ITC1","ITC2" }, new[] { "DocEntry", "DocNum" }, true, true);
 
             #region "Setting Table"
             AddTables("CONFIG", "Configuration Header", SAPbobsCOM.BoUTBTableType.bott_MasterData);

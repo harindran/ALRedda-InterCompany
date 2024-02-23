@@ -667,6 +667,36 @@ namespace General.Common
             }
         }
 
+        public void Removerow(SAPbouiCOM.Matrix omatrix, string Columname_check)
+        {
+            try
+            {
+                if (omatrix.VisualRowCount == 0)
+                    return;
+                if (string.IsNullOrEmpty(Columname_check.ToString()))
+                    return;
+               
+                int rwcnt = omatrix.RowCount;
+                int delrwcnt = 0;
+                for (int i = 0; i < rwcnt; i++)
+                {
+
+                    int row = (i + 1) - delrwcnt;
+                    if (string.IsNullOrEmpty(((SAPbouiCOM.EditText)omatrix.Columns.Item(Columname_check).Cells.Item(row).Specific).String))
+                    {
+                        omatrix.DeleteRow(row);
+                        delrwcnt++;
+                    }
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         public void SetAutomanagedattribute_Editable(SAPbouiCOM.Form oform, string fieldname, bool add, bool find, bool update)
         {
 
