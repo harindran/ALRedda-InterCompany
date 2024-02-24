@@ -16,14 +16,17 @@ namespace ALRedda.Business_Objects.SupportFiles
         }
         public void ITCStart()
         {
+            try
+            {
+                oForm.Freeze(true);
 
-            SAPbouiCOM.Matrix Matrix0,Matrix1;
+                SAPbouiCOM.Matrix Matrix0,Matrix1;
             Matrix0 = ((SAPbouiCOM.Matrix)(oForm.Items.Item("MJE").Specific));
             Matrix1 = ((SAPbouiCOM.Matrix)(oForm.Items.Item("Mvendor").Specific));
             SAPbouiCOM.EditText EditText0 = (SAPbouiCOM.EditText)(oForm.Items.Item("DocNum").Specific);
             SAPbouiCOM.EditText EditText1 = (SAPbouiCOM.EditText)(oForm.Items.Item("DocDt").Specific);
             SAPbouiCOM.EditText EditText2 = (SAPbouiCOM.EditText)(oForm.Items.Item("Remark").Specific);
-          //  oForm.Settings.Enabled = true;
+          // oForm.Settings.Enabled = true;
            
             if (oForm.Mode == SAPbouiCOM.BoFormMode.fm_ADD_MODE)
             {
@@ -54,12 +57,24 @@ namespace ALRedda.Business_Objects.SupportFiles
                 Matrix0.Columns.Item("#").Editable = false;
 
                 VendorMatrix(Matrix1);
-                Matrix1.AddRow();
+                    Matrix1.Item.Visible = false;
+                    Matrix0.Item.Visible =true;
+                    Matrix1.AddRow();
             }
             else
             {
                 Matrix0.Item.Enabled = false;
                 Matrix1.Item.Enabled = false;
+            }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                oForm.Freeze(false);
             }
         }
 
@@ -97,18 +112,24 @@ namespace ALRedda.Business_Objects.SupportFiles
 
         private void VendorMatrix(SAPbouiCOM.Matrix Matrix0)
         {
-            for (int delrow = 0; delrow < Matrix0.RowCount; delrow++)
+            Matrix0.Clear();
+
+            int colSumcnt = Matrix0.Columns.Count;
+
+            int rowsumcnt = Matrix0.RowCount;
+
+            for (int delrow = 0; delrow < rowsumcnt; delrow++)
             {
                 Matrix0.DeleteRow(1);
             }
 
-            for (int i = 1; i < Matrix0.Columns.Count; i++)
+            for (int i = 1; i < colSumcnt; i++)
             {
                 Matrix0.Columns.Remove(1);
 
             }
 
-            Sapf.AddMatrixcol(Matrix0, oForm, "MVen" + ((int)colVendor.U_Comp).ToString(), "Company", "@ITC2", colVendor.U_Comp.ToString(), 75);
+            Sapf.AddMatrixcol(Matrix0, oForm, "MVen" + ((int)colVendor.U_Comp).ToString(), "Company", "@ITC2", colVendor.U_Comp.ToString(), 75,visible:false);
             Sapf.AddMatrixcol(Matrix0, oForm, "MVen" + ((int)colVendor.U_GLCode).ToString(), "GL Code", "@ITC2", colVendor.U_GLCode.ToString(), 75);
             Sapf.AddMatrixcol(Matrix0, oForm, "MVen" + ((int)colVendor.U_GLName).ToString(), "GL Name", "@ITC2", colVendor.U_GLName.ToString(), 75);
             Sapf.AddMatrixcol(Matrix0, oForm, "MVen" + ((int)colVendor.U_GLAcc).ToString(), "GL Account", "@ITC2", colVendor.U_GLAcc.ToString(), 75);

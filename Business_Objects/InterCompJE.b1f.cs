@@ -53,7 +53,7 @@ namespace ALRedda.Business_Objects
             this.Button2.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.Button2_ClickAfter);
             this.Button2.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button2_ClickBefore);
             this.Matrix1 = ((SAPbouiCOM.Matrix)(this.GetItem("Mvendor").Specific));
-            this.Matrix1.ValidateAfter += new SAPbouiCOM._IMatrixEvents_ValidateAfterEventHandler(this.Matrix1_ValidateAfter);
+            this.Matrix1.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix1_KeyDownAfter);
             this.Matrix1.LostFocusAfter += new SAPbouiCOM._IMatrixEvents_LostFocusAfterEventHandler(this.Matrix1_LostFocusAfter);
             this.Matrix1.ChooseFromListAfter += new SAPbouiCOM._IMatrixEvents_ChooseFromListAfterEventHandler(this.Matrix1_ChooseFromListAfter);
             this.Matrix1.GotFocusAfter += new SAPbouiCOM._IMatrixEvents_GotFocusAfterEventHandler(this.Matrix1_GotFocusAfter);
@@ -90,6 +90,7 @@ namespace ALRedda.Business_Objects
             // startInit();
             ITCclscs cNCReq = new ITCclscs(oForm);
             cNCReq.ITCStart();
+
 
             odbHeader = oForm.DataSources.DBDataSources.Item("@OITC");
             ODbvender = oForm.DataSources.DBDataSources.Item("@ITC2");
@@ -644,9 +645,9 @@ namespace ALRedda.Business_Objects
 
                     for (int j = 0; j < 2; j++)
                     {
-                        string OffsetLed = rc.Fields.Item("U_GLCode").Value.ToString(); 
+                        string OffsetLed =""; 
 
-                        if (string.IsNullOrEmpty(rc.Fields.Item("U_GLCode").Value.ToString())&& j != 0)
+                        if (j != 0)
                         {
                             string lstquery = "SELECT \"U_DBOffset\"  FROM \"@CONFIG2\" c WHERE \"U_DBName1\" ='" + rc.Fields.Item("U_DBComp").Value.ToString() + "';";
                             OffsetLed = clsModule.objaddon.objglobalmethods.getSingleValue(lstquery);
@@ -963,13 +964,7 @@ namespace ALRedda.Business_Objects
 
         }
 
-        private void Cleartext()
-        {
-            Matrix0.Clear();
-            startInit();
-            
-        }
-
+       
         private void Button0_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
             string ErrorMsg = "";
@@ -1034,7 +1029,8 @@ namespace ALRedda.Business_Objects
 
         private void Button0_PressedAfter(object sboObject, SBOItemEventArg pVal)
         {
-            Cleartext();
+            ITCclscs cNCReq = new ITCclscs(oForm);
+            cNCReq.ITCStart();
 
         }
 
@@ -1148,15 +1144,20 @@ namespace ALRedda.Business_Objects
         private void Matrix1_KeyDownBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
+            string company = "";
 
             if (pVal.ColUID == "MVen" + ((int)colVendor.U_GLCode).ToString() && pVal.CharPressed == 9)
             {
 
                 if (!string.IsNullOrEmpty(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_GLCode).ToString()).Cells.Item(pVal.Row).Specific).Value)) return;
-                if (string.IsNullOrEmpty(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Comp).ToString()).Cells.Item(pVal.Row).Specific).Value)) return;
+                company = ((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Comp).ToString()).Cells.Item(pVal.Row).Specific).Value;
+                if (string.IsNullOrEmpty(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Comp).ToString()).Cells.Item(pVal.Row).Specific).Value))
+                {
+                    company = clsModule.objaddon.objcompany.CompanyDB;
+                }
                 choose choose = new choose();
                 choose.Retval += Choose_Retval;
-                choose.lstrquery = "SELECT  \"AcctName\" as \"Name\" ,\"AcctCode\" as \"code\", \"AcctCode\" as \"CtrlCode\" FROM " + ((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Comp).ToString()).Cells.Item(pVal.Row).Specific).Value.ToString() + ".OACT  where \"LocManTran\" ='N' and  \"Postable\" ='Y'  AND \"FrozenFor\"='N'  order by \"Name\";";
+                choose.lstrquery = "SELECT  \"AcctName\" as \"Name\" ,\"AcctCode\" as \"code\", \"AcctCode\" as \"CtrlCode\" FROM " + company + ".OACT  where \"LocManTran\" ='N' and  \"Postable\" ='Y'  AND \"FrozenFor\"='N'  order by \"Name\";";
 
                 Currentrow = pVal.Row;
                 choose.Show();
@@ -1282,7 +1283,7 @@ namespace ALRedda.Business_Objects
             if (pVal.ColUID== "MVen" + ((int)colVendor.U_TaxCode).ToString())
             {
                 SAPbouiCOM.ISBOChooseFromListEventArg pCFL = (SAPbouiCOM.ISBOChooseFromListEventArg)pVal;
-           
+              
                 if (!(pCFL.SelectedObjects == null))
                 {
                     Matrix1.GetLineData(pVal.Row);
@@ -1291,27 +1292,34 @@ namespace ALRedda.Business_Objects
                     ODbvender.SetValue(colVendor.U_TaxRate.ToString(), 0, pCFL.SelectedObjects.Columns.Item("Rate").Cells.Item(0).Value.ToString());
                     Matrix1.SetLineData(pVal.Row);
 
-                    
+                    ODbvender.Clear();
                     
                 }
-                ODbvender.Clear();
+              
             }
 
         }
 
-        private void Matrix1_ValidateAfter(object sboObject, SBOItemEventArg pVal)
+        private void Matrix1_KeyDownAfter(object sboObject, SBOItemEventArg pVal)
         {
             decimal taxval = 0;
-            if (pVal.ColUID == "MVen" + ((int)colVendor.U_TaxCode).ToString() ||
-                pVal.ColUID == "MVen" + ((int)colVendor.U_Credit).ToString() ||
-                pVal.ColUID == "MVen" + ((int)colVendor.U_Debit).ToString()
-                )
-
+            if (pVal.CharPressed == 9)
             {
+                if (pVal.ColUID == "MVen" + ((int)colVendor.U_TaxCode).ToString() ||
+                    pVal.ColUID == "MVen" + ((int)colVendor.U_Credit).ToString() ||
+                    pVal.ColUID == "MVen" + ((int)colVendor.U_Debit).ToString()
+                    )
 
-                taxval += TaxCalculate(stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Credit).ToString()).Cells.Item(pVal.Row).Specific).Value), stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxRate).ToString()).Cells.Item(pVal.Row).Specific).Value));
-                taxval += TaxCalculate(stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Debit).ToString()).Cells.Item(pVal.Row).Specific).Value), stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxRate).ToString()).Cells.Item(pVal.Row).Specific).Value));
-                ((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxAmt).ToString()).Cells.Item(pVal.Row).Specific).Value = taxval.ToString();
+                {
+
+                    taxval += TaxCalculate(stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Credit).ToString()).Cells.Item(pVal.Row).Specific).Value), stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxRate).ToString()).Cells.Item(pVal.Row).Specific).Value));
+                    taxval += TaxCalculate(stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_Debit).ToString()).Cells.Item(pVal.Row).Specific).Value), stf.CtoD(((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxRate).ToString()).Cells.Item(pVal.Row).Specific).Value));
+                    Matrix1.GetLineData(pVal.Row);
+                    ODbvender.SetValue(colVendor.U_TaxAmt.ToString(), 0, taxval.ToString());
+                    Matrix1.SetLineData(pVal.Row);
+                    ODbvender.Clear();
+                 //   ((SAPbouiCOM.EditText)Matrix1.Columns.Item("MVen" + ((int)colVendor.U_TaxAmt).ToString()).Cells.Item(pVal.Row).Specific).Value = taxval.ToString();
+                }
             }
         }
 
